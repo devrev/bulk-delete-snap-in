@@ -1,0 +1,90 @@
+version: "2"
+name: "Bulk Delete Data"
+description: "Bulk Deletes the required tickets, issues, accounts, contacts or opportunity data *entirely*(Note: This is an irreversible action)"
+
+service_account:
+  display_name: Bulk Delete Data Bot
+
+inputs:
+  organization:
+    - name: tags
+      description: "Select tags of items for the use case"
+      base_type: id
+      field_type: array
+      id_type:
+        - tag
+      is_required: true
+      default_value: ["don:core:dvrv-us-1:devo/xxx:tag/xxx"]
+      ui:
+        display_name: Tag List
+    - name: access_group
+      description: Select which group of users would be allowed to run the snap-in
+      field_type: id
+      id_type:
+        - group
+      ui:
+        display_name: Deletion Access Group
+    - name: failed_count
+      description: Stores the number of failed deletions
+      field_type: int
+      ui:
+        display_name: Failed Count
+        is_hidden: true
+    - name: object_type
+      description: Select the type of data to be deleted
+      field_type: text
+      ui:
+        display_name: Object Type
+        is_hidden: true
+    - name: validation
+      description: Validation for the snap-in
+      default_value: "None"
+      field_type: text
+      ui:
+        display_name: Validation
+        is_hidden: true
+
+event_sources:
+  organization:
+    # Unused event source(hourly-events), added for backward compatibility
+    - name: hourly-events
+      description: Timer event source based on interval seconds
+      display_name: Timer source
+      type: timer-events
+      config:
+        interval_seconds: 100
+        metadata:
+          event_key: hourly_events
+    - name: scheduled-events
+      description: Events scheduled from snap-ins
+      display_name: scheduled-events
+      type: flow-events
+
+functions:
+  - name: bulk_delete_all
+    description: function to delete the data type based on the tags taken through the timeline
+  - name: snap_kit_template
+    description: function to delete the data type based on the tags taken through the timeline
+
+snap_kit_actions:
+  - name: bulk_delete_all
+    description: Snap Kit for when the execution is ready to start
+    function: bulk_delete_all
+
+commands:
+  - name: bulk_delete
+    namespace: devrev
+    description: Command to bulk delete objects based on the tags.
+    surfaces:
+      - surface: discussions
+        object_types:
+          - snap_in
+    usage_hint: "Data Type:['Tickets', 'Issues', 'Accounts', Contacts', 'Opportunities'] Specify the type of data to be deleted and mention the tags and the access to delete in the configuration"
+    function: snap_kit_template
+
+automations:
+  - name: on-scheduled-event
+    source: scheduled-events
+    event_types:
+      - custom:scheduled_issue_creation
+    function: bulk_delete_all
