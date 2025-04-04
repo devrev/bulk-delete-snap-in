@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@devrev-growth/snap-in-utils": "^1.9.11",
+    "directory-validator": "^1.5.4"
+  }
+}

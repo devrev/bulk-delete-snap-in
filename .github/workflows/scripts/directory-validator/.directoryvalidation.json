@@ -1,0 +1,49 @@
+{
+  "ignoreFiles": [
+    ".gitignore",
+    "Makefile",
+    "Makefile.sidekick",
+    ".config.yaml",
+    ".vscode",
+    ".directoryvalidation.json",
+    "**.md",
+    "package-lock.json",
+    "requirements.txt",
+    ".tool-versions",
+    ".prettierignore",
+    ".prettierrc"
+  ],
+  "ignoreDirs": [
+    "**/node_modules",
+    ".git",
+    ".github",
+    ".circleci",
+    "e2e",
+    "examples",
+    "commerce",
+    "scripts",
+    "ticket-status-prod-assist"
+  ],
+
+  "rules": [
+    {
+      "type": "directory",
+      "name": "*",
+      "rules": [
+        { "type": "file", "name": "/manifest[\\w]*.yaml/" },
+        { "type": "file", "name": "*" },
+        {
+          "type": "directory",
+          "name": "code",
+          "isOptional": true,
+          "rules": [
+            { "type": "file", "name": "*" },
+            { "type": "directory", "name": "src" },
+            { "type": "directory", "name": "*" }
+          ]
+        },
+        { "type": "directory", "name": "*" , "isOptional": true}
+      ]
+    }
+  ]
+}
